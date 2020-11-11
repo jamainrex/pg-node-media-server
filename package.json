@@ -1,0 +1,14 @@
+{
+  "name": "pg-media-server",
+  "version": "1.0.0",
+  "description": "Node Media Server for Portgrace",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jerex Lennon",
+  "license": "ISC",
+  "dependencies": {
+    "node-media-server": "^2.2.4"
+  }
+}
