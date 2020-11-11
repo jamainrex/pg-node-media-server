@@ -36,7 +36,7 @@ const config = {
     secret: 'nodemedia2017privatekey'
   },
   relay: {
-    ffmpeg: '/usr/local/bin/ffmpeg',
+    ffmpeg: '/usr/bin/ffmpeg',
     tasks: [
       {
         app: 'live',
