@@ -9,6 +9,7 @@
   "author": "Jerex Lennon",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/pubsub": "^2.6.0",
     "node-media-server": "^2.2.4"
   }
 }
