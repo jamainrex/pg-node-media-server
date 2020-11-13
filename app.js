@@ -2,6 +2,11 @@ const NodeMediaServer = require('node-media-server');
 //Imports the Google Cloud client library
 const {PubSub} = require('@google-cloud/pubsub');
 
+const getStreamSlug = (streamPath) => {
+        let parts = streamPath.split('/');
+        return parts[parts.length - 1];
+};
+
 const NodePubSub = async (streamId, msg, streamPath, args) => {
   // [START pubsub_publish_custom_attributes]
   /**
@@ -22,7 +27,8 @@ const NodePubSub = async (streamId, msg, streamPath, args) => {
     const customAttributes = {
         streamId: streamId,
         args: JSON.stringify(args),
-        streamPath: streamPath
+        streamPath: streamPath,
+        slug: getStreamSlug(streamPath)
     };
 
     const messageId = await pubSubClient
@@ -35,7 +41,7 @@ const NodePubSub = async (streamId, msg, streamPath, args) => {
   // [END pubsub_publish_custom_attributes]
 }
 
-const config = {
+  const config = {
   rtmp: {
     port: 1935,
     chunk_size: 60000,
@@ -70,20 +76,19 @@ const config = {
     publish: false,
     secret: 'nodemedia2017privatekey'
   },
-  relay: {
-    ffmpeg: '/usr/bin/ffmpeg',
-    tasks: [
-      {
-        app: 'live',
-        mode: 'push',
-        edge: 'rtmp://104.154.208.139',
-      }
-    ]
-  }
+  // relay: {
+  //   ffmpeg: 'C:/ffmpeg/bin/ffmpeg.exe',
+  //   tasks: [
+  //     {
+  //       app: 'live',
+  //       mode: 'push',
+  //       edge: 'rtmp://104.154.208.139',
+  //     }
+  //   ]
+  // }
 };
 
-
- let nms = new NodeMediaServer(config)
+  let nms = new NodeMediaServer(config)
   nms.run();
 
   nms.on('preConnect', (id, args) => {
@@ -109,6 +114,7 @@ const config = {
 
   nms.on('postPublish', (id, StreamPath, args) => {
     console.log('[NodeEvent on postPublish]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}`);
+    NodePubSub(id, 'postPublish', StreamPath, args);
   });
 
   nms.on('donePublish', (id, StreamPath, args) => {
@@ -124,10 +130,8 @@ const config = {
 
   nms.on('postPlay', (id, StreamPath, args) => {
     console.log('[NodeEvent on postPlay]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}`);
-    NodePubSub(id, 'postPlay', StreamPath, args);
   });
 
   nms.on('donePlay', (id, StreamPath, args) => {
     console.log('[NodeEvent on donePlay]', `id=${id} StreamPath=${StreamPath} args=${JSON.stringify(args)}`);
-    NodePubSub(id, 'donePlay', StreamPath, args);
   });
