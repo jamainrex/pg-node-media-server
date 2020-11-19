@@ -2,6 +2,10 @@ const NodeMediaServer = require('node-media-server');
 //Imports the Google Cloud client library
 const { PubSub } = require('@google-cloud/pubsub');
 
+const projectId = 'portgrace-backend-277111';
+// Creates a client; cache this for further use
+const pubSubClient = new PubSub({ projectId });
+
 const getStreamSlug = (streamPath) => {
   let parts = streamPath.split('/');
   return parts[parts.length - 1];
@@ -12,12 +16,8 @@ const NodePubSub = async (streamId, msg, streamPath, args) => {
   /**
    * TODO(developer): Uncomment these variables before running the sample.
    */
-  const projectId = 'portgrace-backend-277111';
   const topicName = 'projects/portgrace-backend-277111/topics/live-streaming';
   const data = JSON.stringify(msg);
-
-  // Creates a client; cache this for further use
-  const pubSubClient = new PubSub({ projectId });
 
   async function publishMessageWithCustomAttributes() {
     // Publishes the message as a string, e.g. "Hello, world!" or JSON.stringify(someObject)
